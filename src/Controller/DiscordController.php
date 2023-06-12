@@ -6,13 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HomeController extends AbstractController
+class DiscordController extends AbstractController
 {
-    #[Route('/', name: 'home')]
+    #[Route('/discord', name: 'app_discord')]
     public function index(): Response
     {
-        return $this->render('page/home/index.html.twig', [
-            'controller_name' => 'HomeController',
+        return $this->render('page/discord/index.html.twig', [
+            'controller_name' => 'DiscordController',
         ]);
     }
 }

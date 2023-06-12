@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Challenges{% endblock %}
+
+{% block body %}
+<style>
+</style>
+
+<div class="challenges">
+    <h2>Active Challenges</h2>
+
+    {% for challenge in challenges.active %}
+        <div class="challenge">
+            <div class="challenge-name">{{ challenge.name }}</div>
+            <div class="challenge-short-desc">{{ challenge.shortDescription }}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

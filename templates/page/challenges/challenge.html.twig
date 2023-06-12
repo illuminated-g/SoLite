@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ challenge.name }}{% endblock %}
+
+{% block body %}
+<style>
+</style>
+
+<div class="challenge">
+    <p class="chal-description"> {{ challenge.description|raw }}
+</div>
+{% endblock %}

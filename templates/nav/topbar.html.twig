@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg navbar-dark px-5">
+    <a class="navbar-brand" href="/"><img src="/images/sol-logo.ico"><span class="ml-3">Summer of LabVIEW</span></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a href="/challenges">Challenges</a>
+            <li>
+            <li class="nav-item">
+                <a href="/about">About</a>
+            </li>
+            <li class="nav-item">
+                <a href="https://discord.gg/KxtUER4NGS" target="_blank">Discord
+                    <svg width="16px" height="16px" viewBox="0 0 24 24" style="vertical-align:top"><g stroke-width="2.1" stroke="#bbb" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 13.5 17 19.5 5 19.5 5 7.5 11 7.5"></polyline><path d="M14,4.5 L20,4.5 L20,10.5 M20,4.5 L11,13.5"></path></g></svg>
+                </a>
+            </li>
+            {% if app.user %}
+                <li class="nav-item">
+                    <a class="" href="/profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="" href="/logout">Logout</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="" href="/login">Login</a>
+                </li>
+                <li class="nav-item ml-3">
+                    <a class="btn btn-sm orange" href="/register">Sign Up</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

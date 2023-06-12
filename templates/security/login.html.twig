@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block navbar %}
+    {% if nolinks is defined %}
+        {% include 'nav/nolinks.html.twig' %}
+    {% else %}
+        {% include 'nav/topbar.html.twig' %}
+    {% endif %}
+{% endblock %}
+
+{% block pageHeader %}
+{% endblock %}
+
+{% block stylesheets %}
+    {#{{ encore_entry_link_tags('password') }}#}
+{% endblock %}
+
+{% block scripts %}
+    {#{{ encore_entry_script_tags('password') }}#}
+{% endblock %}
+
+{% block body %}
+    <style>
+
+    .col-auto > .form-control {
+        display: inline;
+    }
+
+    .password-group {
+        position: relative;
+    }
+
+    .password-vis {
+        position: absolute;
+        right: 0.5rem;
+        cursor: pointer;
+        top: 0.25rem;
+    }
+    </style>
+
+    <div class="container text-center">
+        <form method="POST" class="container mt-3">
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="mb-3">
+                    You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                </div>
+            {% endif %}
+            {#<h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>#}
+
+            <h2 class="mt-5">Welcome Back!</h2>
+            
+            <div class="row mt-5 justify-content-center">
+                <div class="col-auto">
+                    <input type="text" value="{{ last_username }}" name="username" class="form-control" placeholder="Username" size="30" required autofocus><br>
+                    <input type="password" name="password" class="form-control my-3" placeholder="Password"><br>
+                    <a href="/recover-pass">Forgot your password?</a><br>
+                    <button type="submit" name="submit" class="btn orange w-100 mt-5 mb-2">Sign in</button><br>
+                    New user? <a href="/register">Sign up</a>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('login') }}">
+                <input type="hidden" name="_remember_me" value="1">
+
+                {#
+                    Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+                    See https://symfony.com/doc/current/security/remember_me.html
+
+                    <div class="checkbox mb-3">
+                        <label>
+                            <input type="checkbox" name="_remember_me"> Remember me
+                        </label>
+                    </div>
+                #}
+
+                {#<button class="btn btn-lg btn-primary" type="submit">
+                    Sign in
+                </button>#}
+            </div>
+        </form>
+    </div>
+{% endblock %}

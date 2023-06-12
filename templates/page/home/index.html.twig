@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Welcome!{% endblock %}
+
+{% block style %}
+    {{ encore_entry_link_tags('home') }}
+{% endblock %}
+
+{% block scripts %} 
+    {{ encore_entry_script_tags('home') }}
+{% endblock %}
+
+{% block body %}
+<div id="home"></div>
+{% endblock %}

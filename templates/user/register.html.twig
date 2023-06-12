@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% import "include/forms.html.twig" as forms %}
+
+{% block title %}Register{% endblock %}
+
+{% block navbar %}
+    {% include 'nav/nolinks.html.twig' %}
+{% endblock %}
+
+{% block pageHeader %}{% endblock %}
+
+{% block body %}
+<style>
+.col-inputs {
+    border-left: 2px solid #CCC;
+}
+
+.sol-input-group {
+    margin-bottom: 2rem;
+}
+
+.help-text {
+    color: #ccc;
+}
+
+small.form-text {
+    margin-top: 0.6rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #555;
+    padding-bottom: 4px;
+}
+
+.form-label {
+    font-size: 1.5rem;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.col-inputs h4 {
+    margin-bottom: 3rem;
+}
+
+.col-inputs button {
+    width: 300px;
+}
+
+</style>
+
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <div class="col-md-10 text-center col-inputs">
+            <div class="container px-5">
+                <h4>Register to participate in competitions and earn recertification points.</h4>
+                {{ forms.item(form.username) }}
+                {{ forms.item(form.email) }}
+                {{ forms.item(form.full_name) }}
+                {{ forms.item(form.company) }}
+                {{ forms.item(form.country) }}
+                {{ forms.item(form.state) }}
+                {{ forms.item(form.ni_email) }}
+                {{ forms.item(form.clad) }}
+                {{ forms.item(form.cld) }}
+                {{ forms.item(form.cla) }}
+                {{ forms.item(form.cled) }}
+                {{ forms.item(form.ctd) }}
+                {{ forms.item(form.cta) }}
+                {{ forms.item(form.champion) }}
+                {{ forms.item(form.ni_employee) }}
+                {{ forms.item(form.partner) }}
+
+                <button class="btn orange mt-5" type="submit">
+                    Create account
+                </button>
+                <p>Already have an account? <a href="/login">Sign in</a></p>
+            </div>
+        </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -6,10 +6,10 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
-import '../styles/app.css';
+import '../styles/home.css';
 
-import App from './App.svelte';
+import App from './Home.svelte';
 
 const app = new App({
-    target: document.body,
+    target: document.getElementById('home'),
 });

@@ -27,16 +27,22 @@ class Submission
     private ?\DateTimeInterface $submitted = null;
 
     #[ORM\Column]
-    private ?float $score = null;
+    private ?float $score = 0;
 
     #[ORM\Column]
-    private ?bool $approved = null;
+    private ?bool $approved = false;
 
     #[ORM\ManyToOne]
     private ?User $approved_by = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $approved_on = null;
+
+    #[ORM\Column]
+    private ?bool $recert_points = false;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $recert_level = null;
 
     public function getId(): ?int
     {
@@ -135,6 +141,30 @@ class Submission
     public function setApprovedOn(?\DateTimeInterface $approved_on): static
     {
         $this->approved_on = $approved_on;
+
+        return $this;
+    }
+
+    public function isRecertPoints(): ?bool
+    {
+        return $this->recert_points;
+    }
+
+    public function setRecertPoints(bool $recert_points): static
+    {
+        $this->recert_points = $recert_points;
+
+        return $this;
+    }
+
+    public function getRecertLevel(): ?string
+    {
+        return $this->recert_level;
+    }
+
+    public function setRecertLevel(?string $recert_level): static
+    {
+        $this->recert_level = $recert_level;
 
         return $this;
     }

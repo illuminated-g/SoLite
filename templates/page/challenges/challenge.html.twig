@@ -4,9 +4,36 @@
 
 {% block body %}
 <style>
+.challenge {
+    text-align: center;
+}
+
+.submit-info {
+    font-style: italic;
+    text-align: center;
+}
+
+.challenge img {
+    max-width: 90%
+}
+
+.challenge iframe {
+    max-width: 90%;
+}
 </style>
 
 <div class="challenge">
+
+    {% if challenge.available == 1 %}
+        {% if app.user %}
+            <a href="/submit/{{ challenge.id }}" class="btn orange submit-link mb-3">Upload Submission</a>
+        {% else %}
+            <p class="submit-info">You must be logged in to submit an entry.</p>
+        {% endif %}
+    {% else %}
+        <p class="submit-info">This challenge is not active right now but you can still practice.</p>
+    {% endif %}
+
     <p class="chal-description"> {{ challenge.description|raw }}
 </div>
 {% endblock %}

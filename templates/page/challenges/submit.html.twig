@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% import "include/forms.html.twig" as forms %}
+
+{% block title %}Submit {{ challenge.name }}{% endblock %}
+
+{% block body %}
+<style>
+.col-inputs {
+    border-left: 2px solid #CCC;
+}
+
+.sol-input-group {
+    margin-bottom: 2rem;
+}
+
+.help-text {
+    color: #ccc;
+}
+
+small.form-text {
+    margin-top: 0.6rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #555;
+    padding-bottom: 4px;
+}
+
+.form-label {
+    font-size: 1.5rem;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.col-inputs h4 {
+    margin-bottom: 3rem;
+}
+
+.col-inputs button {
+    width: 300px;
+}
+</style>
+
+<div class="challenge">
+
+    {% if challenge.available %}
+        {{ form_start(form) }}
+            {% if app.user.isChangePass() %}
+                <div class="alert alert-warning text-center">You must update your password.</div>
+            {% endif %}
+
+            {#{{ forms.item(form.old_pass) }}
+            {{ forms.item(form.password) }}#}
+
+            <div class="container pass-form mt-5">
+                {{ forms.item(form.file) }}
+                {{ forms.item(form.recert_points) }}
+
+                <div class="container text-center mt-3">
+                    <button class="btn orange" type="submit">
+                        Upload Submission
+                    </button>
+                </div>
+            </div>
+        {{ form_end(form) }}
+    {% else %}
+        <div class="alert alert-warning text-center">This challenge is not currently available.</div>
+    {% endif %}
+</div>
+{% endblock %}

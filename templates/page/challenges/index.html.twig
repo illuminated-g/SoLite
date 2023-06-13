@@ -4,15 +4,28 @@
 
 {% block body %}
 <style>
+.challenges {
+    text-align: center;
+}
+
+.challenge {
+    border-radius: 1rem;
+    background-color: #222;
+    padding: 0.5rem 2rem 1rem;
+}
+
+.challenge-name {
+    font-size: 3rem;
+}
 </style>
 
 <div class="challenges">
     <h2>Active Challenges</h2>
 
     {% for challenge in challenges.active %}
-        <div class="challenge">
-            <div class="challenge-name">{{ challenge.name }}</div>
-            <div class="challenge-short-desc">{{ challenge.shortDescription }}
+        <div class="challenge mt-5">
+            <div class="challenge-name mb-2"><a href="/challenge/{{ challenge.id }}">{{ challenge.name }}</a></div>
+            <div class="challenge-short-desc">{{ challenge.shortDescription }}</div>
         </div>
     {% endfor %}
 </div>

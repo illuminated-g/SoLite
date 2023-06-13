@@ -50,6 +50,12 @@ class ChallengesController extends AbstractController
     #[Route('/submit/{challenge}', name: 'submit')]
     public function submit(Challenge $challenge, Request $req, ChallengeService $cs): Response
     {
+        if (!$this->isGranted('ROLE_USER')) {
+            $this->addFlash('error', 'You must be logged in to submit an entry');
+            $this->denyAccessUnlessGranted('ROLE_USER');
+        }
+
+
         $form = $this->createForm(SubmissionType::class);
 
         $form->handleRequest($req);

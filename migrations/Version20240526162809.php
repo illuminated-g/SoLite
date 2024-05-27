@@ -21,7 +21,7 @@ final class Version20240526162809 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE challenge ADD lower_score_better TINYINT(1) NOT NULL');
-        $this->addSql('ALTER TABLE submission ADD scored TINYINT(1) NOT NULL');
+        $this->addSql('ALTER TABLE submission ADD scored TINYINT(1) NOT NULL DEFAULT 0');
     }
 
     public function down(Schema $schema): void

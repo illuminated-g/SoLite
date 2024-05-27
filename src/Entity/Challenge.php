@@ -31,7 +31,7 @@ class Challenge
     #[ORM\Column]
     private bool $available = false;
 
-    #[ORM\Column]
+    #[ORM\Column( options: ['default' => 0])]
     private bool $auto_score = false;
 
     #[ORM\Column]

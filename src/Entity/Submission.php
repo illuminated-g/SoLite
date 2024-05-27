@@ -20,7 +20,7 @@ class Submission
     #[ORM\ManyToOne(inversedBy: 'submissions')]
     private ?ChallengeRun $run = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, options: ['default' => ''])]
     private ?string $status = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -44,10 +44,10 @@ class Submission
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $recert_level = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ['default' => false])]
     private ?bool $scored = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, options: ['default' => ''])]
     private ?string $score_status = null;
 
     public function getId(): ?int

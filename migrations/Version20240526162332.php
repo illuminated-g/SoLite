@@ -20,7 +20,7 @@ final class Version20240526162332 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE challenge ADD leaderboard TINYINT(1) NOT NULL, CHANGE auto_score auto_score TINYINT(1) NOT NULL');
+        $this->addSql('ALTER TABLE challenge ADD leaderboard TINYINT(1) NOT NULL DEFAULT 0, CHANGE auto_score auto_score TINYINT(1) NOT NULL DEFAULT 0');
     }
 
     public function down(Schema $schema): void

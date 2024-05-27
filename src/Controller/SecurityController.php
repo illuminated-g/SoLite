@@ -18,11 +18,14 @@ use App\Form\ChangePassType;
 use App\Entity\User;
 
 use App\Service\Mailer;
+use App\Service\SpamService;
 
 class SecurityController extends AbstractController
 {
     #[Route('/register', name: 'register')]
-    public function register(Request $req, UserPasswordHasherInterface $hasher, Mailer $mailer, ManagerRegistry $doctrine): Response
+    public function register(Request $req, UserPasswordHasherInterface $hasher,
+        Mailer $mailer, ManagerRegistry $doctrine,
+        SpamService $spamService): Response
     {
         $user = new User();
         
@@ -37,6 +40,11 @@ class SecurityController extends AbstractController
 
             $user->setRegisteredOn(new DateTime());
             $user->setRegistrationIp($req->getClientIp());
+
+            if ($spamService->checkIsSpamUser($user)) {
+                $this->addFlash('error', "Registration cannot be completed due to illegal values in input fields. Ensure special characters are not being used in username or ");
+                return $this->redirectToRoute("register");
+            }
 
             $mail = $mailer->createMailer();
 
@@ -66,12 +74,17 @@ class SecurityController extends AbstractController
             }
 
             $em = $doctrine->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            $this->addFlash('success', 'Registration successful. Check your email for your one-time use password to log in.');
-
-            return $this->redirectToRoute("home");
+            try {
+                $em->persist($user);
+            
+                $em->flush();
+    
+                $this->addFlash('success', 'Registration successful. Check your email for your one-time use password to log in.');
+    
+                return $this->redirectToRoute("home");
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Username and email must be unique: ' . $e->getMessage());
+            }
         }
 
         return $this->render('user/register.html.twig', [

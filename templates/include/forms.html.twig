@@ -16,7 +16,12 @@
 {% endmacro %}
 
 {% macro item(item, style = "", placeholder = "", showLabel = true) %}
-    <div class="container mt-2 text-center">
+    <div class="container mt-2 text-center"> 
+        <div class="form-row">
+            <div class="form-errors">
+                {{ form_errors(item) }}
+            </div>
+        </div>
         <div class="form-row">
             {% if showLabel %}
                 <div class="col-sm-4 form-label">
@@ -24,13 +29,13 @@
                 </div>
             {% endif %}
             <div class="col-sm-6">
-                {{ form_widget(item, { 'attr': {'class': 'form-control', 'style': style, 'placeholder': placeholder } }) }}
+                {% set widget_classes = item.vars.errors is empty ? 'form-control' : 'form-control form-item-errors' %}
+                {{ form_widget(item, { 'attr': {'class': widget_classes, 'style': style, 'placeholder': placeholder } }) }}
             </div>
         </div>
         <div class="form-row text-center px-2">
             <div class="col-sm-4"></div>
             <small class="form-text col-sm-10 pb-3">{{ form_help(item) }}</small>
-            {{ form_errors(item) }}
         </div>
     </div>
 {% endmacro %}

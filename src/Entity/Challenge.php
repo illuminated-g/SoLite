@@ -31,6 +31,18 @@ class Challenge
     #[ORM\Column]
     private bool $available = false;
 
+    #[ORM\Column]
+    private bool $auto_score = false;
+
+    #[ORM\Column]
+    private bool $leaderboard = false;
+
+    #[ORM\Column]
+    private ?bool $lower_score_better = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $score_label = null;
+
     public function __construct()
     {
         $this->runs = new ArrayCollection();
@@ -115,6 +127,54 @@ class Challenge
     public function setAvailable(bool $available): static
     {
         $this->available = $available;
+
+        return $this;
+    }
+
+    public function isAutoScore(): ?bool
+    {
+        return $this->autoScore;
+    }
+
+    public function setAutoScore(?bool $autoScore): static
+    {
+        $this->autoScore = $autoScore;
+
+        return $this;
+    }
+
+    public function isLeaderboard(): ?bool
+    {
+        return $this->leaderboard;
+    }
+
+    public function setLeaderboard(bool $leaderboard): static
+    {
+        $this->leaderboard = $leaderboard;
+
+        return $this;
+    }
+
+    public function isLowerScoreBetter(): ?bool
+    {
+        return $this->lower_score_better;
+    }
+
+    public function setLowerScoreBetter(bool $lower_score_better): static
+    {
+        $this->lower_score_better = $lower_score_better;
+
+        return $this;
+    }
+
+    public function getScoreLabel(): ?string
+    {
+        return $this->score_label;
+    }
+
+    public function setScoreLabel(string $score_label): static
+    {
+        $this->score_label = $score_label;
 
         return $this;
     }

@@ -171,6 +171,19 @@ body {
     border: 0px;
 }
 
+.form-errors {
+    color: #D23;
+}
+
+.form-item-errors {
+    border: solid 3px #D23;
+    box-shadow: 0 0 5px 2px #F00;
+}
+
+.form-errors ul {
+    list-style-type: none;
+}
+
 footer {
     color: #111;
 }

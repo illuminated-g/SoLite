@@ -44,6 +44,12 @@ class Submission
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $recert_level = null;
 
+    #[ORM\Column]
+    private ?bool $scored = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $score_status = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -165,6 +171,30 @@ class Submission
     public function setRecertLevel(?string $recert_level): static
     {
         $this->recert_level = $recert_level;
+
+        return $this;
+    }
+
+    public function isScored(): ?bool
+    {
+        return $this->scored;
+    }
+
+    public function setScored(bool $scored): static
+    {
+        $this->scored = $scored;
+
+        return $this;
+    }
+
+    public function getScoreStatus(): ?string
+    {
+        return $this->score_status;
+    }
+
+    public function setScoreStatus(string $score_status): static
+    {
+        $this->score_status = $score_status;
 
         return $this;
     }

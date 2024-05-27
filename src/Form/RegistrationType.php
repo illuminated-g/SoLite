@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class RegistrationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -18,13 +20,16 @@ class RegistrationType extends AbstractType
 
         $builder
             ->add('username', TextType::class, [
-                'help' => "The name you use to log in with and is displayed to others."
+                'help' => "The name you use to log in with and is displayed to others.",
+                'required' => true
             ])
             ->add('email', EmailType::class, [
-                'help' => "Used for site related contact. We'll email you a random password for your first login."
+                'help' => "Used for site related contact. We'll email you a random password for your first login.",
+                'required' => true
             ])
             ->add('full_name', TextType::class, [
-                'help' => "Your real name will only be visible to organizers of competitions. This must match your NI registered name if submitting for recertification points."
+                'help' => "Your real name will only be visible to organizers of competitions. This must match your NI registered name if submitting for recertification points.",
+                'required' => true
             ])
             ->add('company', TextType::class, [
                 'help' => "Optional. May be used by your employer for company tournaments or for extra tournament groupings.",

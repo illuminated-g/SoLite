@@ -60,7 +60,10 @@ body {
     font-weight: 600;
     display: flex;
     justify-content: space-between;
-    padding-top: 3rem;
+}
+
+.nav-user {
+    color: rgb(230, 180, 17);
 }
 
 .navbar-brand {
@@ -85,10 +88,6 @@ body {
 .page {
     max-width: 1500px;
     padding: 10px 30px;
-}
-
-.banner {
-    margin-bottom: 10px;
 }
 
 .banner-text {

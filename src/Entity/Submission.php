@@ -45,10 +45,10 @@ class Submission
     private ?string $recert_level = null;
 
     #[ORM\Column(options: ['default' => false])]
-    private ?bool $scored = null;
+    private ?bool $scored = false;
 
     #[ORM\Column(type: Types::TEXT, options: ['default' => ''])]
-    private ?string $score_status = null;
+    private ?string $score_status = "";
 
     public function getId(): ?int
     {

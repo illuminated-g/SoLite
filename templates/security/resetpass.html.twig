@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% import "include/forms.html.twig" as forms %}
+
+{% block title %}Reset Password{% endblock %}
+
+{% block navbar %}
+    {% include 'nav/topbar.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <style>
+        .pass-form {
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+
+    {{ form_start(form) }}
+
+        <div class="container pass-form mt-5">
+            {{ form_widget(form) }}
+
+            <div class="container text-center mt-3">
+                <button class="btn orange" type="submit">
+                    Reset Password
+                </button>
+            </div>
+        </div>
+    {{ form_end(form) }}
+    
+{% endblock %}

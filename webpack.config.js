@@ -79,6 +79,8 @@ Encore
 let config = Encore.getWebpackConfig();
 config.resolve.mainFields = ['svelte', 'browser', 'module', 'main'];
 config.resolve.extensions = ['.mjs', '.js', '.svelte'];
+
+//This is disabled despite the warning on build because it breaks builds.
 //config.resolve.conditionNames = ['svelte'];
 
 let svelte = config.module.rules.pop();

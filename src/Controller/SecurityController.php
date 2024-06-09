@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use \DateTime;
+use \DateInterval;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,9 +15,11 @@ use Doctrine\Persistence\ManagerRegistry;
 
 use App\Form\RegistrationType;
 use App\Form\ChangePassType;
+use App\Form\RecoverPassType;
+use App\Form\RecoverPassInfo;
 
 use App\Entity\User;
-
+use App\Repository\UserRepository;
 use App\Service\Mailer;
 
 class SecurityController extends AbstractController
@@ -81,7 +84,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/changepass', name: 'change_pass')]
-    public function changePass(Request $req, UserPasswordHasherInterface $hasher, Mailer $mailer, ManagerRegistry $doctrine): Response {
+    public function changePass(Request $req, UserPasswordHasherInterface $hasher,Mailer $mailer, ManagerRegistry $doctrine): Response {
         $form = $this->createForm(ChangePassType::class);
 
         $form->handleRequest($req);
@@ -120,6 +123,89 @@ class SecurityController extends AbstractController
         return $this->render('security/changepass.html.twig', [
             'form' => $form->createView(),
             'error' => null,
+        ]);
+    }
+
+    #[Route('/recover-pass', name: 'recover-pass')]
+    public function recoverPass(Request $req, UserPasswordHasherInterface $hasher,
+        Mailer $mailer, ManagerRegistry $doctrine, UserRepository $userRepo): Response
+    {
+        $form = $this->createForm(RecoverPassType::class);
+        $form->handleRequest($req);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $username = $form->getData()->getUsername();
+
+            /** @var User */
+            $user = $userRepo->findOneBy(['username' => $username]);
+
+            if ($user != null) {
+                $tempKey = bin2hex(random_bytes(128));
+                $user->setTemporaryKey($tempKey);
+
+                $expires = new DateTime();
+                $expires->add(DateInterval::createFromDateString('1 day'));
+                $user->setTempKeyExpires($expires);
+
+                $mail = $mailer->createMailer();
+
+                $from = $_ENV['MAIL_EMAIL'];
+                $site = $req->getSchemeAndHttpHost();
+
+                $mail->setFrom($from);
+                $mail->addAddress($user->getEmail(), $user->getFullName());
+                $mail->Subject = $req->getHost() . ' Password Reset';
+
+                $msg = $this->renderView('email/recoverpass.html.twig', [
+                    'tempKey' => $tempKey,
+                    'site' => $site
+                ]);
+
+                $mail->msgHTML($msg);
+
+                if (!$mail->send()) {
+                    $error = 'There was an error sending your user registration email: ' . $mail->ErrorInfo . '<br>';
+                    $error .= 'Email us at <a href="mailto:' . $from . '">' . $from . '</a> if you need assistance.';
+
+                    return $this->render('user/register.html.twig', [
+                        'form' => $form->createView(),
+                        'error' => $error
+                    ]);
+                }
+
+                $em = $doctrine->getManager();
+                $em->persist($user);
+                $em->flush();
+
+                $this->addFlash('success', 'Registration successful. Check your email for your one-time use password to log in.');
+
+                return $this->redirectToRoute("home");
+            }
+        }
+
+        return $this->render('security/recoverpass.html.twig', [
+            'form' => $form->createView(),
+            'error' => null,
+        ]);
+    }
+
+    #[Route('/reset-pass', name: 'reset_pass')]
+    public function resetPass(Request $req, UserPasswordHasherInterface $hasher,
+        Mailer $mailer, ManagerRegistry $doctrine, UserRepository $userRepo): Response
+    {
+        $tempKey = $req->get('tempKey');
+
+        $user = $userRepo->findOneBy([
+            'temporary_key' => $tempKey
+        ]);
+
+        if ($user == null) {
+            $this->addFlash('error', "Invalid password reset.");
+            return $this->redirectToRoute("home");
+        }
+
+        return $this->render('security/resetpass.html.twig', [
+            'username' => $user->getUsername()
         ]);
     }
 

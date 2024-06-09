@@ -9,9 +9,15 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints;
+
+use App\Validation\UserValidator;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[UniqueEntity('username', message: 'Username must be unique')]
+#[UniqueEntity('email', message: 'Email must be unique')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -20,6 +26,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Constraints\NotBlank]
+    #[Constraints\Length (min: 4)]
+    #[Constraints\Regex(
+        pattern: '/[\[\]!@#\$%\^&\*()\\/]/',
+        match: false,
+        message: 'Username contains illegal characters'
+    )]
+
     private ?string $username = null;
 
     #[ORM\Column]
@@ -32,30 +46,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Constraints\NotBlank]
+    #[Constraints\Regex(
+        pattern: '/[\[\]!@#\$%\^&\*()\\/]/',
+        match: false,
+        message: 'Full name contains illegal characters'
+    )]
     private ?string $full_name = null;
 
     #[ORM\Column(length: 255)]
+    #[Constraints\NotBlank]
     private ?string $email = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Constraints\Regex(
+        pattern: '/[\[\]!@#\$%\^&\*()\\/]/',
+        match: false,
+        message: 'Country contains illegal characters'
+    )]
     private ?string $country = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Constraints\Regex(
+        pattern: '/[\[\]!@#\$%\^&\*()\\/]/',
+        match: false,
+        message: 'State contains illegal characters'
+    )]
     private ?string $state = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Constraints\Regex(
+        pattern: '/[\[\]!@#\$%\^&\*()\\/]/',
+        match: false,
+        message: 'Company contains illegal characters'
+    )]
     private ?string $company = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $ni_email = null;
 
-    #[ORM\Column]
+    #[ORM\Column]#[Constraints\Expression('this.isNiEmployee() != this.isChampion() or !this.isChampion()', message: 'NI Employees cannot also be Champions')]
     private bool $champion = false;
 
     #[ORM\Column]
     private bool $ni_employee = false;
 
     #[ORM\Column]
+    #[Constraints\Expression('this.isNiEmployee() != this.isPartner() or !this.isPartner()', message: 'NI Employees cannot also be Champions')]
     private bool $partner = false;
 
     #[ORM\Column]

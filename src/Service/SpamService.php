@@ -9,13 +9,12 @@ use Doctrine\Persistence\ManagerRegistry;
 
 use Carbon\Carbon;
 
-/**
- * PackageService serves to perform package operations such as creation, lookup, etc.
- */
-class UserService {
 
+class SpamService {
     private $em;
     private $security;
+    private $illegalUserChars;
+    private $illegalInfoChars;
 
     /**
      * Initializes this instance when needed by a request.
@@ -23,17 +22,13 @@ class UserService {
      * @param EntityManagerInterface $em Provides access to database backed entities.
      * @param Security $security Provides access to currently logged in user, if any, to check permissions.
      */
-    public function __construct(ManagerRegistry $doctrine, Security $security) {
+    public function __construct(ManagerRegistry $doctrine, Security $security,
+        String $illegalUserChars, String $illegalInfoChars) {
         $this->security = $security;
         $this->em = $doctrine->getManager();
     }
 
-    /**
-     * Finishes setup for a user, typically on the first time they log in.
-     *
-     * @param User $user The user to finish setting up
-     */
-    public function finishSetup(User $user) {
+    public function checkIsSpamUser(User $user) {
         
     }
 }

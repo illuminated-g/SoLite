@@ -60,7 +60,10 @@ body {
     font-weight: 600;
     display: flex;
     justify-content: space-between;
-    padding-top: 3rem;
+}
+
+.nav-user {
+    color: rgb(230, 180, 17);
 }
 
 .navbar-brand {
@@ -85,10 +88,6 @@ body {
 .page {
     max-width: 1500px;
     padding: 10px 30px;
-}
-
-.banner {
-    margin-bottom: 10px;
 }
 
 .banner-text {
@@ -169,6 +168,19 @@ body {
     background-color: #458FF6;
     color: #eee;
     border: 0px;
+}
+
+.form-errors {
+    color: #D23;
+}
+
+.form-item-errors {
+    border: solid 3px #D23;
+    box-shadow: 0 0 5px 2px #F00;
+}
+
+.form-errors ul {
+    list-style-type: none;
 }
 
 footer {

@@ -6,6 +6,7 @@
 <style>
 .challenge {
     text-align: center;
+    display: flex;
 }
 
 .submit-info {
@@ -20,20 +21,47 @@
 .challenge iframe {
     max-width: 90%;
 }
+
+.challenge-leaderboard-wrapper {
+    flex-direction: row;
+}
 </style>
 
 <div class="challenge">
 
-    {% if challenge.available == 1 %}
-        {% if app.user %}
-            <a href="/submit/{{ challenge.id }}" class="btn orange submit-link mb-3">Upload Submission</a>
-        {% else %}
-            <p class="submit-info">You must be logged in to submit an entry.</p>
-        {% endif %}
-    {% else %}
-        <p class="submit-info">This challenge is not active right now but you can still practice.</p>
+    {% if challenge.leaderboard == 1 %}
+    <div class="container">
+        <div class="row">
     {% endif %}
 
-    <p class="chal-description"> {{ challenge.description|raw }}
+            <div class="{{ challenge.leaderboard == 1 ? 'col-12 col-lg-6' : '' }}">
+                {% if challenge.available == 1 %}
+                    {% if app.user %}
+                        <a href="/submit/{{ challenge.id }}" class="btn orange submit-link mb-3">Upload Submission</a>
+                    {% else %}
+                        <p class="submit-info">You must be logged in to submit an entry.</p>
+                    {% endif %}
+                {% else %}
+                    <p class="submit-info">This challenge is not active right now but you can still practice.</p>
+                {% endif %}
+
+                <p class="chal-description"> {{ challenge.description|raw }}
+            </div>
+
+    {% if challenge.leaderboard == 1 %}
+            <div class="col-12 col-lg-6">
+                <h2>Leaderboard</h2>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-1">#</div>
+                        <div class="col-6">Username</div>
+                        <div class="col-5">{{ challenge.scoreLabel }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}

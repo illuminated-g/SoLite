@@ -25,19 +25,28 @@
 .challenge-leaderboard-wrapper {
     flex-direction: row;
 }
+
+.challenge-date {
+    font-style: italic;
+}
+
+.challenge .container {
+    max-width: 1600px !important;
+}
 </style>
 
 <div class="challenge">
 
     {% if challenge.leaderboard == 1 %}
-    <div class="container">
+    <div class="col-wrapper">
         <div class="row">
     {% endif %}
 
             <div class="{{ challenge.leaderboard == 1 ? 'col-12 col-lg-6' : '' }}">
-                {% if challenge.available == 1 %}
+                {% if challenge.active == 1 %}
                     {% if app.user %}
                         <a href="/submit/{{ challenge.id }}" class="btn orange submit-link mb-3">Upload Submission</a>
+                        <div class="challenge-date mb-5">Deadline: {{ challenge.runs[0].finish|date('Y-m-d H:i:s') }} UTC</div>
                     {% else %}
                         <p class="submit-info">You must be logged in to submit an entry.</p>
                     {% endif %}
@@ -50,13 +59,21 @@
 
     {% if challenge.leaderboard == 1 %}
             <div class="col-12 col-lg-6">
-                <h2>Leaderboard</h2>
+                <h2 class="mt-5">Leaderboard</h2>
                 <div class="container">
                     <div class="row">
                         <div class="col-1">#</div>
                         <div class="col-6">Username</div>
                         <div class="col-5">{{ challenge.scoreLabel }}</div>
                     </div>
+
+                    {% for score in leaderboard %}
+                        <div class="row">
+                            <div class="col-1">{{ loop.index }}</div>
+                            <div class="col-6">{{ score[0].participant.username }}</div>
+                            <div class="col-5">{{ score.score }}</div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

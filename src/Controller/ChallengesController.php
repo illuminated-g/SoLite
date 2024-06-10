@@ -17,13 +17,17 @@ use App\Form\SubmissionType;
 class ChallengesController extends AbstractController
 {
     private $em;
+    private $cs;
 
-    public function __construct(ManagerRegistry $doctrine) {
+    public function __construct(ManagerRegistry $doctrine,
+        ChallengeService $cs)
+    {
         $this->em = $doctrine->getManager();
+        $this->cs = $cs;
     }
 
     #[Route('/challenges', name: 'challenges')]
-    public function index(ChallengeService $cs): Response
+    public function index(): Response
     {
         /** Order for challenges:
          * 1. Active, soonest ending first
@@ -31,7 +35,7 @@ class ChallengesController extends AbstractController
          * 3. Remaining, alphabetically
          */
 
-        $challenges = $cs->groupedList();
+        $challenges = $this->cs->groupedList();
 
 
         return $this->render('page/challenges/index.html.twig', [
@@ -42,8 +46,10 @@ class ChallengesController extends AbstractController
     #[Route('/challenge/{challenge}', name: 'challenge')]
     public function challenge(Challenge $challenge): Response
     {
+        $leaderboard = $this->cs->leaderboard($challenge);
         return $this->render('page/challenges/challenge.html.twig', [
-            'challenge' => $challenge
+            'challenge' => $challenge,
+            'leaderboard' => $leaderboard
         ]);
     }
 

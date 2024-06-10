@@ -131,14 +131,42 @@ class Challenge
         return $this;
     }
 
-    public function isAutoScore(): ?bool
+    public function isActive(): bool
     {
-        return $this->autoScore;
+        $now = new \DateTime();
+        $runs = $this->getRuns();
+
+        foreach ($runs as $run) {
+            if ($run->getStart() < $now && $run->getFinish() > $now) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public function setAutoScore(?bool $autoScore): static
+    public function getActiveRun(): ?ChallengeRun
     {
-        $this->autoScore = $autoScore;
+        $now = new \DateTime();
+        $runs = $this->getRuns();
+
+        foreach ($runs as $run) {
+            if ($run->getStart() < $now && $run->getFinish() > $now) {
+                return $run;
+            }
+        }
+
+        return null;
+    }
+
+    public function isAutoScore(): ?bool
+    {
+        return $this->auto_score;
+    }
+
+    public function setAutoScore(?bool $auto_score): static
+    {
+        $this->auto_score = $auto_score;
 
         return $this;
     }
@@ -155,9 +183,9 @@ class Challenge
         return $this;
     }
 
-    public function isLowerScoreBetter(): ?bool
+    public function isLowerScoreBetter(): bool
     {
-        return $this->lower_score_better;
+        return $this->lower_score_better == true;
     }
 
     public function setLowerScoreBetter(bool $lower_score_better): static

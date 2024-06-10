@@ -17,16 +17,55 @@
 .challenge-name {
     font-size: 3rem;
 }
+
+.challenges h2 {
+    padding-top: 5rem;
+}
+
+.challenge-date {
+    font-style: italic;
+}
 </style>
 
 <div class="challenges">
     <h2>Active Challenges</h2>
 
-    {% for challenge in challenges.active %}
-        <div class="challenge mt-5">
-            <div class="challenge-name mb-2"><a href="/challenge/{{ challenge.id }}">{{ challenge.name }}</a></div>
-            <div class="challenge-short-desc">{{ challenge.shortDescription }}</div>
-        </div>
-    {% endfor %}
+    {% if challenges.active|length > 0 %}
+        {% for challenge in challenges.active %}
+            <div class="challenge mt-5">
+                <div class="challenge-name mb-2"><a href="/challenge/{{ challenge.id }}">{{ challenge.name }}</a></div>
+                <div class="challenge-date mb-2">Deadline: {{ challenge.runs[0].finish|date('Y-m-d H:i:s') }} UTC</div>
+                <div class="challenge-short-desc">{{ challenge.shortDescription }}</div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <em>There are no active challenges at this time.</em>
+    {% endif %}
+
+    {% if challenges.upcoming|length > 0 %}
+        <h2>Upcoming Challenges</h2>
+
+        {% for challenge in challenges.upcoming %}
+            <div class="challenge mt-5">
+                <div class="challenge-name mb-2"><a href="/challenge/{{ challenge.id }}">{{ challenge.name }}</a></div>
+                <div class="challenge-date mb-2">Starts: {{ challenge.runs[0].start|date('Y-m-d H:i:s') }} UTC</div>
+                <div class="challenge-date mb-2">Ends: {{ challenge.runs[0].finish|date('Y-m-d H:i:s') }} UTC</div>
+                <div class="challenge-short-desc">{{ challenge.shortDescription }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if challenges.previous|length > 0 %}
+        <h2>Previous Challenges</h2>
+
+        {% for challenge in challenges.previous %}
+            <div class="challenge mt-5">
+                <div class="challenge-name mb-2"><a href="/challenge/{{ challenge.id }}">{{ challenge.name }}</a></div>
+                <div class="challenge-date mb-2">Last Run: {{ challenge.runs[0].finish|date('Y-m-d H:i:s') }} UTC</div>
+                <div class="challenge-short-desc">{{ challenge.shortDescription }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
 </div>
 {% endblock %}

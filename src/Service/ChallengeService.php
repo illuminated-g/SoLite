@@ -4,6 +4,7 @@ namespace App\Service;
 
 use \DateTime;
 
+use Doctrine\ORM\Query\Expr\GroupBy;
 use Symfony\Bundle\SecurityBundle\Security;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,6 +15,8 @@ use App\Entity\Submission;
 
 use App\Repository\ChallengeRepository;
 use App\Repository\ChallengeRunRepository;
+
+use Psr\Log\LoggerInterface;
 
 use Carbon\Carbon;
 
@@ -26,21 +29,26 @@ class ChallengeService {
 
     private string $submissionFolder;
 
-    public function __construct(Security $security, ManagerRegistry $doctrine, ChallengeRepository $chalRepo, ChallengeRunRepository $runRepo, string $submissionFolder)
+    private LoggerInterface $logger;
+
+    public function __construct(Security $security, ManagerRegistry $doctrine,
+        ChallengeRepository $chalRepo, ChallengeRunRepository $runRepo,
+        string $submissionFolder, LoggerInterface $logger)
     {
         $this->security = $security;
         $this->em = $doctrine->getManager();
         $this->chalRepo = $chalRepo;
         $this->runRepo = $runRepo;
         $this->submissionFolder = $submissionFolder;
+        $this->logger = $logger;
     }
 
     public function groupedList(): array
     {
         $grouped = [];
         $grouped['active'] = [];
-        $grouped['next'] = [];
-        $grouped['inactive'] = [];
+        $grouped['upcoming'] = [];
+        $grouped['previous'] = [];
 
         //first query all available challenges
         /*$available = $this->chalRepo->findBy([
@@ -49,13 +57,102 @@ class ChallengeService {
 
         //query challenge runs that haven't ended yet
 
-        $available = $this->lookupBy([
-            'available' => true
-        ], true);
+        // $available = $this->lookupBy([
+        //     'available' => true
+        // ], true);
 
-        $grouped['active'] = $available;
+        // $grouped['active'] = $available;
+
+        $grouped['active'] = $this->activeChallenges();
+        $grouped['upcoming'] = $this->upcomingChallenges();
+        $grouped['previous'] = $this->previousChallenges();
 
         return $grouped;
+    }
+
+    public function leaderboard(Challenge $challenge): array
+    {
+        $leaderboard = [];
+
+        if ($challenge->isLeaderboard()) {
+            $run = $challenge->getActiveRun();
+
+            if (!is_null($run)) {
+                $qb = $this->em->createQueryBuilder();
+
+                $order = 'DESC';
+                $selectScore = 'MAX(s.score)';
+
+                if ($challenge->isLowerScoreBetter()) {
+                    $order = 'ASC';
+                    $selectScore = 'MIN(s.score)';
+                }
+
+                $qb ->select(['s', 'u', $selectScore . ' AS score'])
+                    ->from(Submission::class,'s')
+                    ->leftJoin('s.participant','u')
+                    ->where("s.status = 'complete'")
+                    ->andWhere('s.run = :run')
+                    ->groupBy('s.participant')
+                    ->setParameter('run', $run);
+                
+                $query = $qb->getQuery();
+
+                $leaderboard = $query->getResult();
+            }
+        }
+
+        return $leaderboard;
+    }
+
+    private function activeChallenges(): array
+    {
+        $qb = $this->em->createQueryBuilder();
+
+        $now = new \DateTime();
+
+        $qb ->select(['c', 'r'])
+            ->from(Challenge::class, 'c')
+            ->leftJoin('c.runs', 'r')
+            ->where(':now BETWEEN r.start AND r.finish')
+            ->andWhere('c.available = TRUE')
+            ->orderBy('r.finish', 'ASC')
+            ->setParameter('now', $now);
+        
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+
+    private function upcomingChallenges(): array {
+        $qb = $this->em->createQueryBuilder();
+        $now = new \DateTime();
+
+        $qb ->select(['c','r'])
+            ->from(Challenge::class,'c')
+            ->leftJoin('c.runs','r')
+            ->where(':now < r.start')
+            ->andWhere('c.available = TRUE')
+            ->orderBy('r.start', 'ASC')
+            ->setParameter('now', $now);
+        
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+
+    private function previousChallenges(): array {
+        $qb = $this->em->createQueryBuilder();
+        $now = new \DateTime();
+
+        $qb ->select(['c','r'])
+            ->from(Challenge::class,'c')
+            ->leftJoin('c.runs','r')
+            ->where(':now > r.finish')
+            ->andWhere('c.available = TRUE')
+            ->orderBy('r.finish', 'DESC')
+            ->setParameter('now', $now);
+        
+        $query = $qb->getQuery();
+        return $query->getResult();
     }
 
     public function lookupBy($params, $exact = false) {

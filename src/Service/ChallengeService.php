@@ -94,6 +94,7 @@ class ChallengeService {
                     ->where("s.status = 'complete'")
                     ->andWhere('s.run = :run')
                     ->groupBy('s.participant')
+                    ->orderBy($selectScore, $order)
                     ->setParameter('run', $run);
                 
                 $query = $qb->getQuery();

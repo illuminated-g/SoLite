@@ -153,6 +153,11 @@ class SecurityController extends AbstractController
             $user = $userRepo->findOneBy(['username' => $username]);
 
             if ($user != null) {
+                if ($user->isChangepass()) {
+                    $this->addFlash('error', 'You cannot be issued a password reset at this time. Ensure you have checked your spam folder for an initial password that was issued to you. If you need further assistance please post in the Discord server.');
+                    return $this->redirectToRoute('home');
+                }
+
                 $tempKey = bin2hex(random_bytes(128));
                 $user->setTemporaryKey($tempKey);
 

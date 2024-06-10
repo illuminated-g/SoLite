@@ -26,11 +26,11 @@ services:
 
     App\Service\ChallengeService:
         arguments:
-            $submissionFolder: '%app.submission.folder'
+            $submissionFolder: '%app.submission.folder%'
     
     App\Service\AutoScorerService:
         arguments:
-            $submissionFolder: '%app.submission.folder'
+            $submissionFolder: '%app.submission.folder%'
 
     App\Service\SpamService:
         arguments:

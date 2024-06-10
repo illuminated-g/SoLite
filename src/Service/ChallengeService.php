@@ -209,6 +209,8 @@ class ChallengeService {
         // this is needed to safely include the file name as part of the URL
         $newFilename = $challenge->getId() . '-' . $submission->getId() . '.zip';
 
+        $this->logger->info($this->submissionFolder . ' - ' . $newFilename);
+
         // Move the file to the directory where brochures are stored
         try {
             $file->move(

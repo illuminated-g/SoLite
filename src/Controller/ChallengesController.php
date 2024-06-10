@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 
+use Psr\Log\LoggerInterface;
+
 use App\Entity\Challenge;
 use App\Entity\ChallengeRun;
 use App\Entity\Submission;
@@ -19,11 +21,15 @@ class ChallengesController extends AbstractController
     private $em;
     private $cs;
 
+    /** LoggerInterface */
+    private $logger;
+
     public function __construct(ManagerRegistry $doctrine,
-        ChallengeService $cs)
+        ChallengeService $cs, LoggerInterface $logger)
     {
         $this->em = $doctrine->getManager();
         $this->cs = $cs;
+        $this->logger = $logger;
     }
 
     #[Route('/challenges', name: 'challenges')]

@@ -70,7 +70,7 @@
                     {% for score in leaderboard %}
                         <div class="row">
                             <div class="col-1">{{ loop.index }}</div>
-                            <div class="col-6">{{ score[0].participant.username }}</div>
+                            <div class="col-6">{{ score.username }}</div>
                             <div class="col-5">{{ score.score }}</div>
                         </div>
                     {% endfor %}

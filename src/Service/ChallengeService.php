@@ -88,7 +88,7 @@ class ChallengeService {
                     $selectScore = 'MIN(s.score)';
                 }
 
-                $qb ->select(['s', 'u', $selectScore . ' AS score'])
+                $qb ->select(['u.username AS username', $selectScore . ' AS score'])
                     ->from(Submission::class,'s')
                     ->leftJoin('s.participant','u')
                     ->where("s.status = 'complete'")

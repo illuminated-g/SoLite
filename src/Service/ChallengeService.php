@@ -228,7 +228,7 @@ class ChallengeService {
         return [];
     }
 
-    public function submissions(UserInterface $user, ChallengeRun $run): array
+    public function submissions(?UserInterface $user, ChallengeRun $run): array
     {
         if (is_null($user)) {
             return [];
@@ -240,6 +240,7 @@ class ChallengeService {
             ->from(Submission::class,'s')
             ->where('s.participant = :participant')
             ->andWhere('s.run = :run')
+            ->orderBy('s.submitted', 'DESC')
             ->setParameter('participant', $user)
             ->setParameter('run', $run);
         

@@ -228,9 +228,9 @@ class ChallengeService {
         return [];
     }
 
-    public function submissions(?UserInterface $user, ChallengeRun $run): array
+    public function submissions(?UserInterface $user, ?ChallengeRun $run): array
     {
-        if (is_null($user)) {
+        if (is_null($user) || is_null($run)) {
             return [];
         }
 

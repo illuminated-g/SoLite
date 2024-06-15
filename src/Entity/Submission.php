@@ -47,8 +47,11 @@ class Submission
     #[ORM\Column(options: ['default' => false])]
     private ?bool $scored = false;
 
-    #[ORM\Column(type: Types::TEXT, options: ['default' => ''])]
-    private ?string $score_status = "";
+    #[ORM\ManyToOne]
+    private ?AutoScorer $scorer = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $scoring_started = null;
 
     public function getId(): ?int
     {
@@ -132,7 +135,7 @@ class Submission
         return $this->approved_by;
     }
 
-    public function setApprovedBy(?User $approvedBy): static
+    public function setApprovedBy(?User $approved_by): static
     {
         $this->approvedBy = $approved_by;
 
@@ -187,14 +190,26 @@ class Submission
         return $this;
     }
 
-    public function getScoreStatus(): ?string
+    public function getScorer(): ?AutoScorer
     {
-        return $this->score_status;
+        return $this->scorer;
     }
 
-    public function setScoreStatus(string $score_status): static
+    public function setScorer(?AutoScorer $scorer): static
     {
-        $this->score_status = $score_status;
+        $this->scorer = $scorer;
+
+        return $this;
+    }
+
+    public function getScoringStarted(): ?\DateTimeInterface
+    {
+        return $this->scoring_started;
+    }
+
+    public function setScoringStarted(?\DateTimeInterface $scoring_started): static
+    {
+        $this->scoring_started = $scoring_started;
 
         return $this;
     }

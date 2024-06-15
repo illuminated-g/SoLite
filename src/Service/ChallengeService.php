@@ -8,6 +8,10 @@ use Doctrine\ORM\Query\Expr\GroupBy;
 use Symfony\Bundle\SecurityBundle\Security;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 use App\Entity\Challenge;
 use App\Entity\ChallengeRun;
@@ -207,7 +211,7 @@ class ChallengeService {
 
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         // this is needed to safely include the file name as part of the URL
-        $newFilename = $challenge->getId() . '-' . $submission->getId() . '.zip';
+        $newFilename = $submission->getId() . '.zip';
 
         $this->logger->info($this->submissionFolder . ' - ' . $newFilename);
 
@@ -218,9 +222,28 @@ class ChallengeService {
                 $newFilename
             );
         } catch (FileException $e) {
-            return [$e.getMessageKey()];
+            return ['Unable to relocate upload (' . $e->getCode() . ')'];
         }
 
         return [];
+    }
+
+    public function submissions(UserInterface $user, ChallengeRun $run): array
+    {
+        if (is_null($user)) {
+            return [];
+        }
+
+        $qb = $this->em->createQueryBuilder();
+
+        $qb ->select('s')
+            ->from(Submission::class,'s')
+            ->where('s.participant = :participant')
+            ->andWhere('s.run = :run')
+            ->setParameter('participant', $user)
+            ->setParameter('run', $run);
+        
+        $query = $qb->getQuery();
+        return $query->getResult();
     }
 }

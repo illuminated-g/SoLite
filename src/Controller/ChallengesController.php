@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 use Psr\Log\LoggerInterface;
 
@@ -24,12 +26,15 @@ class ChallengesController extends AbstractController
     /** LoggerInterface */
     private $logger;
 
+    private $security;
+
     public function __construct(ManagerRegistry $doctrine,
-        ChallengeService $cs, LoggerInterface $logger)
+        ChallengeService $cs, LoggerInterface $logger, Security $security)
     {
         $this->em = $doctrine->getManager();
         $this->cs = $cs;
         $this->logger = $logger;
+        $this->security = $security;
     }
 
     #[Route('/challenges', name: 'challenges')]
@@ -53,9 +58,14 @@ class ChallengesController extends AbstractController
     public function challenge(Challenge $challenge): Response
     {
         $leaderboard = $this->cs->leaderboard($challenge);
+
+        $user = $this->security->getUser();
+        $submissions = $this->cs->submissions($user, $challenge->getActiveRun());
+
         return $this->render('page/challenges/challenge.html.twig', [
             'challenge' => $challenge,
-            'leaderboard' => $leaderboard
+            'leaderboard' => $leaderboard,
+            'submissions' => $submissions
         ]);
     }
 
@@ -66,7 +76,6 @@ class ChallengesController extends AbstractController
             $this->addFlash('error', 'You must be logged in to submit an entry');
             $this->denyAccessUnlessGranted('ROLE_USER');
         }
-
 
         $form = $this->createForm(SubmissionType::class);
 
@@ -87,6 +96,10 @@ class ChallengesController extends AbstractController
                 foreach ($errs as $err) {
                     $this->addFlash('error', $err);
                 }
+                
+                return $this->redirectToRoute('challenge', [
+                    'challenge' => $challenge->getId()
+                ]);
             }
         } else {
             return $this->render('page/challenges/submit.html.twig', [

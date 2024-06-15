@@ -33,6 +33,10 @@
 .challenge .container {
     max-width: 1600px !important;
 }
+
+.score-row {
+    border-top: solid;
+}
 </style>
 
 <div class="challenge">
@@ -61,19 +65,52 @@
             <div class="col-12 col-lg-6">
                 <h2 class="mt-5">Leaderboard</h2>
                 <div class="container">
-                    <div class="row">
-                        <div class="col-1">#</div>
-                        <div class="col-6">Username</div>
-                        <div class="col-5">{{ challenge.scoreLabel }}</div>
-                    </div>
-
-                    {% for score in leaderboard %}
+                    {% if app.user %}
                         <div class="row">
-                            <div class="col-1">{{ loop.index }}</div>
-                            <div class="col-6">{{ score.username }}</div>
-                            <div class="col-5">{{ score.score }}</div>
+                            <div class="col-1">#</div>
+                            <div class="col-6">Username</div>
+                            <div class="col-5">{{ challenge.scoreLabel }}</div>
                         </div>
-                    {% endfor %}
+
+                        {% for score in leaderboard %}
+                            <div class="row">
+                                <div class="col-1">{{ loop.index }}</div>
+                                <div class="col-6">{{ score.username }}</div>
+                                <div class="col-5">{{ score.score }}</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="submit-info">You must be logged in to view the leaderboard.</p>
+                    {% endif %}
+                </div>
+
+                <h2 class="mt-5">Your Scores</h2>
+                <div class="container">
+                    {% if app.user %}
+                        <div class="row">
+                            <div class="col-1">#</div>
+                            <div class="col-3">Submitted</div>
+                            <div class="col-4">{{ challenge.scoreLabel }}</div>
+                            <div class="col-4">Status</div>
+                        </div>
+
+                        {% if submissions is empty %}
+                            <div class="row">
+                                <p class="submit-info mx-auto mt-4">No submissions yet! Go ahead and get started!</p>
+                            </div>
+                        {% else %}
+                            {% for submission in submissions %}
+                                <div class="row score-row mt-2">
+                                    <div class="col-1">{{ loop.index }}</div>
+                                    <div class="col-3">{{ submission.submitted|date('Y-m-d H:i:s') }} UTC</div>
+                                    <div class="col-4">{{ submission.score }}</div>
+                                    <div class="col-4">{{ submission.status }}</div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% else %}
+                        <p class="submit-info mx-auto mt-4">You must be logged in to see your submitted scores.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>

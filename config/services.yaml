@@ -31,6 +31,10 @@ services:
     App\Service\AutoScorerService:
         arguments:
             $submissionFolder: '%app.submission.folder%'
+    
+    App\Controller\ScoringController:
+        arguments:
+            $submissionFolder: '%app.submission.folder%'
 
     App\Service\SpamService:
         arguments:

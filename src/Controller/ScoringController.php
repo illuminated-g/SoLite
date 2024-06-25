@@ -141,6 +141,7 @@ class ScoringController extends AbstractController
 
         $submission->setStatus($info['status']);
         $submission->setScore($info['score']);
+        $submission->setResult($info['result']);
         $submission->setScored(true);
 
         $this->em->persist($submission);

@@ -76,8 +76,14 @@ class LoginFormAuthenticator extends AbstractAuthenticator implements Authentica
             return new RedirectResponse($this->urlGenerator->generate('change_pass'));
         }
 
+        $redirectUrl = $this->urlGenerator->generate('home');
+
+        if (!empty($request->query->get('_target_path'))) {
+            $redirectUrl = $request->query->get('_target_path');
+        }
+
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        return new RedirectResponse($this->urlGenerator->generate('home'));
+        return new RedirectResponse($redirectUrl);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response

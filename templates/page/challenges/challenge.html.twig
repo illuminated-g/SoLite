@@ -38,6 +38,14 @@
     border-top: solid;
     align-items: center;
 }
+
+.modal-body pre {
+    white-space: pre-line;
+}
+
+.modal {
+    color: black;
+}
 </style>
 
 <div class="challenge">
@@ -105,7 +113,67 @@
                                     <div class="col-1">{{ loop.index }}</div>
                                     <div class="col-3">{{ submission.submitted|date('Y-m-d H:i:s') }} UTC</div>
                                     <div class="col-4">{{ submission.score }}</div>
-                                    <div class="col-4">{{ submission.status }}</div>
+                                    <div class="col-4">
+                                        {% if (submission.status != 'complete') %}
+                                            <div class="modal fade" id="failedModal{{ loop.index }}" tabindex="-1" role="dialog">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Submission {{ submission.status }}</h5>
+                                                            <button type="button" class="close" data-dismiss="modal">
+                                                                <span>&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            {% set btnStyle = 'btn-secondary' %}
+                                                            {% if submission.status == 'rejected' %}
+                                                                {% set btnStyle = 'btn-danger' %}
+                                                            {% elseif submission.status == 'failed' %}
+                                                                {% set btnStyle = 'btn-danger' %}
+                                                            {% elseif submission.status == 'timeout' %}
+                                                                {% set btnStyle = 'btn-danger' %}
+                                                            {% elseif submission.status == 'uploaded' %}
+                                                            {% elseif submission.status == 'pending' %}
+                                                                {% set btnStyle = 'btn-info' %}
+                                                            {% else %}
+                                                                {% set btnStyle = 'btn-warning' %}
+                                                            {% endif %}
+
+                                                            {% if submission.result is empty %}
+                                                                {% if submission.status == 'rejected' %}
+                                                                    <p>The submission was rejected due to using functionality that is disallowed but the reason hasn't been saved.</p>
+                                                                    <p>If you have questions, ask in the Discord.</p>
+                                                                {% elseif submission.status == 'failed' %}
+                                                                    <p>Your submission failed to complete the challenge or had an incorrect result.</p>
+                                                                {% elseif submission.status == 'timeout' %}
+                                                                    <p>The scorer aborted your submission because it took too long to run.</p>
+                                                                    <p>Ensure it doesn't display any dialogs or expect any user interaction.</p>
+                                                                {% elseif submission.status == 'uploaded' %}
+                                                                    <p>The submission is waiting to be scored.</p>
+                                                                {% elseif submission.status == 'pending' %}
+                                                                    <p>The submission is in progress of being scored!</p>
+                                                                    <p>Try refreshing in a couple of minutes to see the result.</p>
+                                                                {% else %}
+                                                                    <p>It looks like a new status was added to scoring but wasn't added to this dialog!</p>
+                                                                    <p>Please let us know in the Discord server.</p>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                <pre>{{ submission.result|raw }}</pre>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn {{ btnStyle }}" data-toggle="modal" data-target="#failedModal{{ loop.index }}">
+                                                {{ submission.status }}
+                                            </button>
+                                        {% else %}
+                                            {{ submission.status }}
+                                        {% endif %}
+                                    </div>
                                 </div>
                             {% endfor %}
                         {% endif %}

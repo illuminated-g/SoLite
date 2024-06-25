@@ -202,8 +202,17 @@ class ChallengeService {
         $user = $this->security->getUser();
         $user->addSubmission($submission);
 
+        $activeRun = $challenge->getActiveRun();
+
+        if (is_null($activeRun)) {
+            return [
+                'Cannot accept submission for an inactive challenge.'
+            ];
+        }
+
         $submission->setStatus('uploaded');
         $submission->setSubmitted(new DateTime());
+        $submission->setRun($activeRun);
 
         $this->em->persist($submission);
         $this->em->persist($user);

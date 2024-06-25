@@ -57,10 +57,15 @@ class ChallengesController extends AbstractController
     #[Route('/challenge/{challenge}', name: 'challenge')]
     public function challenge(Challenge $challenge): Response
     {
-        $leaderboard = $this->cs->leaderboard($challenge);
+        $leaderboard = [];
+        $submissions = [];
 
-        $user = $this->security->getUser();
-        $submissions = $this->cs->submissions($user, $challenge->getActiveRun());
+        if ($challenge->isLeaderboard()) {
+            $leaderboard = $this->cs->leaderboard($challenge);
+
+            $user = $this->security->getUser();
+            $submissions = $this->cs->submissions($user, $challenge->getActiveRun());
+        }
 
         return $this->render('page/challenges/challenge.html.twig', [
             'challenge' => $challenge,

@@ -53,6 +53,9 @@ class Submission
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $scoring_started = null;
 
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $result = "";
+
     public function getId(): ?int
     {
         return $this->id;
@@ -210,6 +213,18 @@ class Submission
     public function setScoringStarted(?\DateTimeInterface $scoring_started): static
     {
         $this->scoring_started = $scoring_started;
+
+        return $this;
+    }
+
+    public function getResult(): ?string
+    {
+        return $this->result;
+    }
+
+    public function setResult(string $result): static
+    {
+        $this->result = $result;
 
         return $this;
     }

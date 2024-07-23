@@ -58,6 +58,12 @@
             <div class="{{ challenge.leaderboard == 1 ? 'col-12 col-lg-6' : '' }}">
                 {% if challenge.active == 1 %}
                     {% if app.user %}
+                        {% if challenge.isSingleSubmission %}
+                            <div class="challenge-date mb-4">
+                                Note: This challenge only accepts a single submission per participant.<br/>
+                                Updates can be uploaded but for scoring only the latest submission will be used.
+                            </div>
+                        {% endif %}
                         <a href="/submit/{{ challenge.id }}" class="btn orange submit-link mb-3">Upload Submission</a>
                         <div class="challenge-date mb-5">Deadline: {{ challenge.runs[0].finish|date('Y-m-d H:i:s') }} UTC</div>
                     {% else %}
@@ -114,7 +120,7 @@
                                     <div class="col-3">{{ submission.submitted|date('Y-m-d H:i:s') }} UTC</div>
                                     <div class="col-4">{{ submission.score }}</div>
                                     <div class="col-4">
-                                        {% if (submission.status != 'complete') %}
+                                        {#{% if (submission.status != 'complete') %}#}
                                             <div class="modal fade" id="failedModal{{ loop.index }}" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -135,6 +141,8 @@
                                                             {% elseif submission.status == 'uploaded' %}
                                                             {% elseif submission.status == 'pending' %}
                                                                 {% set btnStyle = 'btn-info' %}
+                                                            {% elseif submission.status == 'complete' %}
+                                                                {% set btnStyle = 'btn-success' %}
                                                             {% else %}
                                                                 {% set btnStyle = 'btn-warning' %}
                                                             {% endif %}
@@ -170,9 +178,9 @@
                                             <button type="button" class="btn {{ btnStyle }}" data-toggle="modal" data-target="#failedModal{{ loop.index }}">
                                                 {{ submission.status }}
                                             </button>
-                                        {% else %}
+                                        {#{% else %}
                                             {{ submission.status }}
-                                        {% endif %}
+                                        {% endif %}#}
                                     </div>
                                 </div>
                             {% endfor %}

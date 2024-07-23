@@ -43,6 +43,9 @@ class Challenge
     #[ORM\Column(length: 255)]
     private ?string $score_label = null;
 
+    #[ORM\Column]
+    private ?bool $single_submission = false;
+
     public function __construct()
     {
         $this->runs = new ArrayCollection();
@@ -203,6 +206,18 @@ class Challenge
     public function setScoreLabel(string $score_label): static
     {
         $this->score_label = $score_label;
+
+        return $this;
+    }
+
+    public function isSingleSubmission(): ?bool
+    {
+        return $this->single_submission;
+    }
+
+    public function setSingleSubmission(bool $single_submission): static
+    {
+        $this->single_submission = $single_submission;
 
         return $this;
     }

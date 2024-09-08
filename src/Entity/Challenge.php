@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+use Psr\Log\LoggerInterface;
+
 #[ORM\Entity(repositoryClass: ChallengeRepository::class)]
 class Challenge
 {
@@ -46,9 +48,12 @@ class Challenge
     #[ORM\Column]
     private ?bool $single_submission = false;
 
-    public function __construct()
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger)
     {
         $this->runs = new ArrayCollection();
+        $this->logger = $logger;
     }
 
     public function getId(): ?int
@@ -160,6 +165,49 @@ class Challenge
         }
 
         return null;
+    }
+
+    public function getActiveOrLastRun(LoggerInterface $logger): ?ChallengeRun
+    {
+        $active = $this->isActive();
+
+        $logger->info('Challenge {id} active: {active}', [
+            'id' => $this->getId(),
+            'active' => ($active ? 'T' : 'F')
+        ]);
+
+        if ($active) {
+            return $this->getActiveRun();
+        } else {
+            $runs = $this->getRuns();
+
+            $lastRun = null;
+            $now = new \DateTime();
+
+            if (count($runs) > 0) {
+                $latest = $runs[0]->getStart();
+                $lastRun = $runs[0];
+
+                foreach ($runs as $run) {
+                    $logger->info('Checking run {rId}', [
+                        'rId' => $run->getId()
+                    ]);
+
+                    $start = $run->getStart();
+
+                    $logger->info('Run started {start}', [
+                        'start' => $run->getStart()
+                    ]);
+
+                    if ($start < $now && $start > $latest) {
+                        $latest = $start;
+                        $lastRun = $run;
+                    }
+                }
+            }
+
+            return $lastRun;
+        }
     }
 
     public function isAutoScore(): ?bool

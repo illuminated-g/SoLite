@@ -64,7 +64,11 @@ class ChallengesController extends AbstractController
             $leaderboard = $this->cs->leaderboard($challenge);
 
             $user = $this->security->getUser();
-            $submissions = $this->cs->submissions($user, $challenge->getActiveRun());
+            $run = $challenge->getActiveOrLastRun($this->logger);
+            if (!is_null($run)) {
+                $this->logger->info("ActiveOrLastRun: " . $run->getId());
+                $submissions = $this->cs->submissions($user, $run);
+            }
         }
 
         return $this->render('page/challenges/challenge.html.twig', [

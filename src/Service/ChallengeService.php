@@ -79,7 +79,7 @@ class ChallengeService {
         $leaderboard = [];
 
         if ($challenge->isLeaderboard()) {
-            $run = $challenge->getActiveRun();
+            $run = $challenge->getActiveOrLastRun($this->logger);
 
             if (!is_null($run)) {
                 $qb = $this->em->createQueryBuilder();
